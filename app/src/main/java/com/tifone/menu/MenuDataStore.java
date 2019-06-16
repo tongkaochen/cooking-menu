@@ -1,5 +1,7 @@
 package com.tifone.menu;
 
+import android.view.Menu;
+
 import java.util.List;
 import java.util.Random;
 
@@ -13,4 +15,8 @@ public interface MenuDataStore {
     int getItemCount();
     boolean removeItem(int index);
     boolean removeItem(MenuItem item);
+    MenuItem getCurrentMenu();
+    void saveCurrentMenu(MenuItem item, boolean force);
+    public List<MenuItem> getAll();
+    void clearAll();
 }

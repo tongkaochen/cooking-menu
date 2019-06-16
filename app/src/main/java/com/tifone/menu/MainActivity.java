@@ -1,10 +1,12 @@
 package com.tifone.menu;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MenuManager mMenuManager;
     private boolean isInSelecting;
     private TextView mResultShow;
-    private MenuItem mCurrentMenu;
+    private MenuItem mCurrentSelectedMenu;
     private TextView mResultTitle;
     private TextView mResetMenu;
 
@@ -35,8 +37,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getMenu.setOnClickListener(this);
         Button confirmResult = findViewById(R.id.confirm_result);
         confirmResult.setOnClickListener(this);
-        mResultTitle.setText(getString(R.string.available_menu, mMenuManager.getMenuSize()));
+        MenuItem todayMenu = mMenuManager.getCurrentMenu();
+        if (todayMenu != null) {
+            mResultTitle.setText("你选择的菜品如下：");
+            mResultShow.setTextColor(getColor(R.color.color_green));
+            mResultShow.setText(todayMenu.toString());
+        } else {
+            mResultTitle.setText(getString(R.string.available_menu, mMenuManager.getMenuSize()));
+        }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("我的点餐历史");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        Intent intent = new Intent();
+        intent.setClass(this, MenuHistoryListActivity.class);
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
+    }
+
     private List<String> createInitData() {
         List<String> dataSet = new ArrayList<>();
         // item: "id#name#count#iconId@materialList"
@@ -69,6 +93,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getAndDisplay() {
+        MenuItem todayMenu = mMenuManager.getCurrentMenu();
+        if ( todayMenu != null) {
+            Toast.makeText(this, "大哥，你今天的菜品已经确定了就不要再选了好吧，请尊重一下我的工作，谢谢", Toast.LENGTH_SHORT).show();
+            mResultTitle.setText("你选择的菜品如下：");
+            mResultShow.setText(todayMenu.toString());
+            mResultShow.setTextColor(getColor(R.color.color_green));
+            mCurrentSelectedMenu = null;
+            isInSelecting = false;
+            return;
+        }
         MenuItem item = mMenuManager.getMenu();
         if (item == null) {
             mResultTitle.setVisibility(View.INVISIBLE);
@@ -76,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         mResultTitle.setText(getString(R.string.available_menu_to_select, mMenuManager.getMenuSize()));
         mResultShow.setText(item.toString());
-        mCurrentMenu = item;
+        mCurrentSelectedMenu = item;
     }
 
     @Override
@@ -99,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void updateSomething() {
         mResultTitle.setText(getString(R.string.available_menu, mMenuManager.getMenuSize()));
-        mCurrentMenu = null;
+        mCurrentSelectedMenu = null;
         mResultShow.setText("");
     }
 
@@ -129,21 +163,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showConfirmDialog() {
-        if (mCurrentMenu == null) {
+        if (mCurrentSelectedMenu == null) {
             Toast.makeText(this, "不选菜品就点确认干哈。。。。啥子", Toast.LENGTH_SHORT).show();
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("明天的菜单")
-                .setMessage(mCurrentMenu.toString())
+                .setMessage(mCurrentSelectedMenu.toString())
                 .setPositiveButton("吃定了", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         isInSelecting = false;
-                        if (mCurrentMenu != null) {
-                            mResultShow.setTextColor(Color.GREEN);
-                            mMenuManager.removeMenu(mCurrentMenu);
-                            Toast.makeText(MainActivity.this, "明天吃" + mCurrentMenu.name + ", 记得买菜，不然打死。。。", Toast.LENGTH_LONG).show();
+                        if (mCurrentSelectedMenu != null) {
+                            mResultShow.setTextColor(getColor(R.color.color_green));
+                            mMenuManager.saveMenu(mCurrentSelectedMenu);
+                            mMenuManager.removeMenu(mCurrentSelectedMenu);
+                            Toast.makeText(MainActivity.this, "明天吃" + mCurrentSelectedMenu.name + ", 记得买菜，不然打死。。。", Toast.LENGTH_LONG).show();
+                            mCurrentSelectedMenu = null;
                         }
                     }
 

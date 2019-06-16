@@ -16,7 +16,7 @@ public class MenuManager {
     private MenuManager(Context context, List<String> items) {
         mContext = context;
         mMenuStore = new MenuSharedPreference(context);
-        mMenuStore.initData(items, true);
+        mMenuStore.initData(items, false);
     }
     public static MenuManager getInstance(Context context, List<String> items) {
         if (INSTANCE == null) {
@@ -43,9 +43,21 @@ public class MenuManager {
         return mMenuStore.getItemCount();
     }
     public void initData(List<String> menus) {
-        mMenuStore.initData(menus, false);
+        initData(menus, false);
     }
-    public void initData(List<String> menus, boolean forcse) {
-        mMenuStore.initData(menus, forcse);
+    public void initData(List<String> menus, boolean forces) {
+        mMenuStore.initData(menus, forces);
+    }
+
+    public void saveMenu(MenuItem currentMenu) {
+        mMenuStore.saveCurrentMenu(currentMenu, false);
+    }
+
+    public MenuItem getCurrentMenu() {
+        return mMenuStore.getCurrentMenu();
+    }
+
+    public List<MenuItem> getAll() {
+        return mMenuStore.getAll();
     }
 }

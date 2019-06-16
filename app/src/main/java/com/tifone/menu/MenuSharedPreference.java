@@ -2,11 +2,17 @@ package com.tifone.menu;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -16,6 +22,7 @@ import java.util.Set;
 public class MenuSharedPreference implements MenuDataStore {
     private static final String SPF_TABLE_NAME = "menu_spf_table";
     private static final String KEY_MENUS = "key_menus";
+    private static final String KEY_DATE = "key_date_";
     private static final String DELIMITER = "#";
     private List<MenuItem> mMenuItems;
     private SharedPreferences mPref;
@@ -24,6 +31,35 @@ public class MenuSharedPreference implements MenuDataStore {
         mPref = context.getSharedPreferences(SPF_TABLE_NAME, Context.MODE_PRIVATE);
         mRandom = new Random();
         mMenuItems = new ArrayList<>();
+    }
+
+    @Override
+    public List<MenuItem> getAll() {
+        Map<String, ?> all = mPref.getAll();
+        Set<String> allKeys = all.keySet();
+        List<MenuItem> allItems = new ArrayList<>();
+        for (String key : allKeys) {
+            if (key.startsWith(KEY_DATE)) {
+                MenuItem item = decodeMenuData(mPref.getString(key, null));
+                if (item == null) {
+                    continue;
+                }
+                item.id = Integer.parseInt(key.substring(KEY_DATE.length()));
+                allItems.add(item);
+            }
+        }
+        Collections.sort(allItems, new Comparator<MenuItem>() {
+            @Override
+            public int compare(MenuItem o1, MenuItem o2) {
+                return o1.id - o2.id;
+            }
+        });
+        return allItems;
+    }
+    public void clearAll() {
+        SharedPreferences.Editor editor= mPref.edit();
+        editor.clear();
+        editor.commit();
     }
 
     private void initAddSaveData(List<MenuItem> items) {
@@ -36,9 +72,37 @@ public class MenuSharedPreference implements MenuDataStore {
     }
     private void clearSpf() {
         SharedPreferences.Editor editor= mPref.edit();
-        editor.clear();
+        editor.putStringSet(KEY_MENUS, null);
+        editor.putString(getCurrentMenuKey(), null);
         editor.commit();
     }
+
+    @Override
+    public MenuItem getCurrentMenu() {
+        return decodeMenuData(mPref.getString(getCurrentMenuKey(), null));
+    }
+
+    private String getCurrentMenuKey() {
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        Log.d("tifone", "format = " + format.format(date));
+        String dateKey = String.format("%s%s", KEY_DATE, format.format(date));
+        if (TextUtils.isEmpty(dateKey)) {
+            return KEY_DATE;
+        }
+        return dateKey;
+    }
+
+    @Override
+    public void saveCurrentMenu(MenuItem item, boolean force) {
+        if (getCurrentMenu() != null && !force) {
+            return;
+        }
+        SharedPreferences.Editor editor = mPref.edit();
+        editor.putString(getCurrentMenuKey(), encodeMenuData(item));
+        editor.commit();
+    }
+
     @Override
     public void initData(List<String> menus, boolean force) {
         if (force) {
@@ -101,7 +165,6 @@ public class MenuSharedPreference implements MenuDataStore {
 
     private void saveList(List<MenuItem> items) {
         SharedPreferences.Editor editor = mPref.edit();
-        editor.clear();
         editor.putStringSet(KEY_MENUS, toSet(items));
         editor.apply();
     }
@@ -127,6 +190,9 @@ public class MenuSharedPreference implements MenuDataStore {
     }
 
     private MenuItem decodeMenuData(String target) {
+        if (target == null) {
+            return null;
+        }
         String[] temp = target.split("@");
         String menuInfo = temp[0];
         String materialInfo = temp.length > 1 ? temp[1] : null;
@@ -155,6 +221,9 @@ public class MenuSharedPreference implements MenuDataStore {
         return item;
     }
     private String encodeMenuData(MenuItem item) {
+        if (item == null) {
+            return null;
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(item.id)
                 .append(DELIMITER)
@@ -169,7 +238,9 @@ public class MenuSharedPreference implements MenuDataStore {
             for (int i = 0; i < material.size(); i++) {
                 builder.append(material.get(i).name)
                         .append(DELIMITER)
-                        .append(material.get(i).usage);
+                        .append(material.get(i).usage)
+                        .append(DELIMITER);
+
             }
         }
         return builder.toString();
