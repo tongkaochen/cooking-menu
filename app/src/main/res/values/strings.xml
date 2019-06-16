@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">终极带饭菜单</string>
+    <string name="available_menu_to_select">"菜单如下(共<b>%d</b>样菜品)："</string>
+    <string name="available_menu">"有<b>%d</b>项菜品供选择"</string>
+</resources>
