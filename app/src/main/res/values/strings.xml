@@ -2,4 +2,33 @@
     <string name="app_name">终极带饭菜单</string>
     <string name="available_menu_to_select">"菜单如下(共<b>%d</b>样菜品)："</string>
     <string name="available_menu">"有<b>%d</b>项菜品供选择"</string>
+    <string name="menu_list_below_text">"你选择的菜品如下："</string>
+    <string name="menu_confirmed_summary">"大哥，你今天的菜品已经确定了就不要再选了好吧，请尊重一下我的工作，谢谢"</string>
+    <string name="password_confirm_title">"验明正身"</string>
+    <string name="return_text">"返回"</string>
+    <string name="password_empty_error">"密码为空，我拒绝你的登录"</string>
+    <string name="password_is_empty">"密码为不能为空"</string>
+    <string name="validation_pass">"验证通过"</string>
+    <string name="validation_fail">"验证失败。。失败"</string>
+    <string name="password_incorrect">"密码错误啦啦"</string>
+    <string name="reset_dialog_tile">"你将菜单恢复默认值"</string>
+    <string name="reset_dialog_summary">"你的菜单会恢复为默认值，之前选择过的菜单将会再次出现，吱吱，也就是要吃重复的菜。。。"</string>
+    <string name="reset_dialog_ok">"毅然重置"</string>
+    <string name="reset_dialog_cancel">"考虑一下"</string>
+    <string name="reset_menu_ok_toast">"狠心的家伙。。。菜单以恢复默认，再见。"</string>
+    <string name="reset_menu_cancel_toast">"少侠多虑了。。。"</string>
+    <string name="menu_selected_toast">"不选菜品就点确认干哈。。。。啥子"</string>
+    <string name="confirm_dialog_title">"明天的菜单"</string>
+    <string name="confirm_dialog_ok">"吃定了"</string>
+    <string name="confirm_dialog_cancel">"我拒绝"</string>
+    <string name="confirm_ok_toast">"明天吃%s, 记得买菜，不然打死。。。"</string>
+    <string name="reject_more_time">"你拒绝的次数过多，不能再拒绝了"</string>
+    <string name="reject_toast">"小样，还挺挑的, 给你个重选的机会"</string>
+    <string name="password_hint">输入你的密码吧，骚年</string>
+    <string name="login_text">确认登录</string>
+    <string name="list_empty_text">并没有任何内容。。。</string>
+    <string name="get_menu_text">明天吃啥</string>
+    <string name="selection_confirm">确认选择</string>
+    <string name="reset_title">菜单恢复默认</string>
+
 </resources>

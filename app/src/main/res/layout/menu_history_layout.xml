@@ -13,5 +13,5 @@
         android:layout_centerInParent="true"
         android:textSize="30sp"
         android:textColor="#F44336"
-        android:text="并没有任何内容。。。"/>
+        android:text="@string/list_empty_text"/>
 </RelativeLayout>

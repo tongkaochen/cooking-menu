@@ -52,6 +52,9 @@ public class MenuManager {
     public void saveMenu(MenuItem currentMenu) {
         mMenuStore.saveCurrentMenu(currentMenu, false);
     }
+    public void saveMenu(MenuItem currentMenu, boolean force) {
+        mMenuStore.saveCurrentMenu(currentMenu, force);
+    }
 
     public MenuItem getCurrentMenu() {
         return mMenuStore.getCurrentMenu();

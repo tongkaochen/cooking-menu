@@ -25,6 +25,7 @@ public class MenuHistoryListActivity extends AppCompatActivity {
     private List<MenuItem> mMenuDataSet;
     private MenuManager mMenuManager;
     private TextView mEmptyView;
+    private Toast mToast;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +90,11 @@ public class MenuHistoryListActivity extends AppCompatActivity {
             menuViewHolder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MenuHistoryListActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    mToast = Toast.makeText(MenuHistoryListActivity.this, item.toString(), Toast.LENGTH_SHORT);
+                    mToast.show();
                 }
             });
         }
